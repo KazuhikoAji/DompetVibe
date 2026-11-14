@@ -1,0 +1,355 @@
+{
+  "metadata": {
+    "project_name": "DompetVibe AI",
+    "study_program": "Informatika FTI Universitas Nusa Mandiri",
+    "standard_outline": "Outline 01 (Perancangan Aplikasi Kecerdasan Artifisial)",
+    "year": 2026,
+    "total_mendeley_samples": 810,
+    "total_transaction_samples": 20660,
+    "train_samples": 648,
+    "test_samples": 162,
+    "features_count": 7,
+    "risk_classes": [
+      {
+        "class_id": 0,
+        "name": "Aman",
+        "range": "IBB <= 2.00",
+        "count": 242
+      },
+      {
+        "class_id": 1,
+        "name": "Waspada",
+        "range": "2.01 <= IBB <= 3.00",
+        "count": 272
+      },
+      {
+        "class_id": 2,
+        "name": "Impulsif",
+        "range": "3.01 <= IBB <= 3.75",
+        "count": 208
+      },
+      {
+        "class_id": 3,
+        "name": "Kritis",
+        "range": "IBB > 3.75",
+        "count": 88
+      }
+    ]
+  },
+  "kmeans_evaluation": {
+    "elbow_data": [
+      {
+        "k": 2,
+        "wcss": 4268.63,
+        "silhouette": 0.2312
+      },
+      {
+        "k": 3,
+        "wcss": 3659.59,
+        "silhouette": 0.1985
+      },
+      {
+        "k": 4,
+        "wcss": 3259.6,
+        "silhouette": 0.1902
+      },
+      {
+        "k": 5,
+        "wcss": 2982.56,
+        "silhouette": 0.191
+      },
+      {
+        "k": 6,
+        "wcss": 2751.16,
+        "silhouette": 0.1972
+      },
+      {
+        "k": 7,
+        "wcss": 2601.81,
+        "silhouette": 0.1988
+      },
+      {
+        "k": 8,
+        "wcss": 2469.06,
+        "silhouette": 0.1811
+      }
+    ],
+    "optimal_k": 4,
+    "silhouette_score_k4": 0.1902,
+    "persona_definitions": {
+      "0": {
+        "name": "Rational & Mindful Planner",
+        "badge_color": "mint",
+        "tagline": "Disiplin Finansial Tinggi & Kebal Godaan Diskon",
+        "description": "Pengeluaran terencana dengan kontrol diri sangat kuat. Jarang tergoda promo kilat atau tren media sosial, serta menghindari utang konsumtif Paylater.",
+        "recommendation": "Pertahankan kebiasaan bijak ini dan mulai alokasikan surplus dana bulanan ke instrumen investasi seperti Reksa Dana atau Deposito."
+      },
+      "1": {
+        "name": "Lifestyle & Culinary Hedonist",
+        "badge_color": "amber",
+        "tagline": "Pecinta Kuliner & Hiburan Santai",
+        "description": "Pengeluaran didominasi kebutuhan emosional dan gaya hidup (kopi, jajan pesan-antar, bioskop/nonton). Masih enggan berhutang Paylater, namun rentan bocor halus di pos kuliner.",
+        "recommendation": "Terapkan aturan batas anggaran kuliner (metode amplop digital) dan batasi frekuensi pesan antar makanan maksimal 2 kali seminggu."
+      },
+      "2": {
+        "name": "Promo & FOMO Trend Hunter",
+        "badge_color": "lavender",
+        "tagline": "Pemburu Diskon Tanggal Kembar & Tren Viral",
+        "description": "Sangat responsif terhadap flash sale, gratis ongkir, dan tren produk media sosial. Membeli bukan karena butuh, melainkan takut ketinggalan promo spesial.",
+        "recommendation": "Terapkan 'Aturan Tunggu 48 Jam' sebelum checkout barang non-esensial untuk menyaring dorongan impulsif sementara."
+      },
+      "3": {
+        "name": "High-Risk Paylater Dependent",
+        "badge_color": "rose",
+        "tagline": "Pengguna Aktif Kredit Digital & Kontrol Diri Rendah",
+        "description": "Ketergantungan tinggi pada fasilitas Paylater dengan rasio belanja melampaui kemampuan kas riil. Kontrol diri defisit sehingga memicu risiko gagal bayar.",
+        "recommendation": "Segera bekukan limit Paylater dan prioritaskan pelunasan cicilan berjalan sebelum arus kas bulanan mengalami defisit berkepanjangan."
+      }
+    }
+  },
+  "classification_evaluation": {
+    "xgboost": {
+      "name": "XGBoost Classifier (Model Utama)",
+      "accuracy": 0.4074,
+      "precision_macro": 0.4209,
+      "precision_weighted": 0.4123,
+      "recall_macro": 0.3888,
+      "recall_weighted": 0.4074,
+      "f1_macro": 0.3993,
+      "f1_weighted": 0.4072,
+      "confusion_matrix": [
+        [
+          25,
+          17,
+          5,
+          1
+        ],
+        [
+          15,
+          19,
+          16,
+          4
+        ],
+        [
+          6,
+          18,
+          17,
+          1
+        ],
+        [
+          2,
+          5,
+          6,
+          5
+        ]
+      ]
+    },
+    "random_forest": {
+      "name": "Random Forest Classifier (Model Pembanding)",
+      "accuracy": 0.5,
+      "precision_macro": 0.5234,
+      "precision_weighted": 0.5158,
+      "recall_macro": 0.4596,
+      "recall_weighted": 0.5,
+      "f1_macro": 0.4683,
+      "f1_weighted": 0.4951,
+      "confusion_matrix": [
+        [
+          25,
+          16,
+          6,
+          1
+        ],
+        [
+          6,
+          27,
+          19,
+          2
+        ],
+        [
+          8,
+          9,
+          25,
+          0
+        ],
+        [
+          2,
+          5,
+          7,
+          4
+        ]
+      ]
+    }
+  },
+  "explainable_ai": {
+    "feature_rankings": [
+      {
+        "feature": "SI_Score",
+        "label": "Pengaruh Sosial & FOMO Medsos",
+        "importance": 0.1859,
+        "percentage": 18.59
+      },
+      {
+        "feature": "SC_Lack_Score",
+        "label": "Defisit Kontrol Diri",
+        "importance": 0.1678,
+        "percentage": 16.78
+      },
+      {
+        "feature": "P_Score",
+        "label": "Sensitivitas Promo & Diskon",
+        "importance": 0.1648,
+        "percentage": 16.48
+      },
+      {
+        "feature": "H_Score",
+        "label": "Motivasi Belanja Hedonis",
+        "importance": 0.134,
+        "percentage": 13.4
+      },
+      {
+        "feature": "Income_Code",
+        "label": "Tingkat Pendapatan",
+        "importance": 0.1289,
+        "percentage": 12.89
+      },
+      {
+        "feature": "Exp_Ratio_Code",
+        "label": "Rasio Belanja / Pendapatan",
+        "importance": 0.1118,
+        "percentage": 11.18
+      },
+      {
+        "feature": "Paylater_Status",
+        "label": "Status Pemakaian Paylater",
+        "importance": 0.1068,
+        "percentage": 10.68
+      }
+    ]
+  },
+  "dataset_previews": {
+    "mendeley_sample": [
+      {
+        "Income_Code": 3,
+        "Exp_Ratio_Code": 1,
+        "Paylater_Status": 1,
+        "P_Score": 3.0,
+        "SI_Score": 1.6666666666666667,
+        "H_Score": 3.5,
+        "SC_Lack_Score": 2.0,
+        "Risk_Class": 1,
+        "Risk_Label": "Waspada"
+      },
+      {
+        "Income_Code": 2,
+        "Exp_Ratio_Code": 2,
+        "Paylater_Status": 2,
+        "P_Score": 3.25,
+        "SI_Score": 2.0,
+        "H_Score": 4.0,
+        "SC_Lack_Score": 2.6,
+        "Risk_Class": 0,
+        "Risk_Label": "Aman"
+      },
+      {
+        "Income_Code": 2,
+        "Exp_Ratio_Code": 1,
+        "Paylater_Status": 1,
+        "P_Score": 3.0,
+        "SI_Score": 3.1666666666666665,
+        "H_Score": 4.0,
+        "SC_Lack_Score": 3.2,
+        "Risk_Class": 1,
+        "Risk_Label": "Waspada"
+      },
+      {
+        "Income_Code": 1,
+        "Exp_Ratio_Code": 1,
+        "Paylater_Status": 2,
+        "P_Score": 4.0,
+        "SI_Score": 4.0,
+        "H_Score": 4.0,
+        "SC_Lack_Score": 3.6,
+        "Risk_Class": 3,
+        "Risk_Label": "Kritis"
+      },
+      {
+        "Income_Code": 6,
+        "Exp_Ratio_Code": 1,
+        "Paylater_Status": 2,
+        "P_Score": 2.0,
+        "SI_Score": 1.8333333333333333,
+        "H_Score": 3.25,
+        "SC_Lack_Score": 2.8,
+        "Risk_Class": 0,
+        "Risk_Label": "Aman"
+      }
+    ],
+    "transaction_sample": [
+      {
+        "transaction_date": "2025-08-17",
+        "description": "Belanja sembako",
+        "amount": 224000.0,
+        "label": 0,
+        "category_type": "Needs",
+        "amount_formatted": "Rp 224.000.0"
+      },
+      {
+        "transaction_date": "2026-01-17",
+        "description": "GoFood",
+        "amount": 27600.0,
+        "label": 1,
+        "category_type": "Impulse/Wants",
+        "amount_formatted": "Rp 27.600.0"
+      },
+      {
+        "transaction_date": "2026-05-18",
+        "description": "Kopi",
+        "amount": 1000.0,
+        "label": 1,
+        "category_type": "Impulse/Wants",
+        "amount_formatted": "Rp 1.000.0"
+      },
+      {
+        "transaction_date": "2025-07-08",
+        "description": "Shopee",
+        "amount": 61000.0,
+        "label": 1,
+        "category_type": "Impulse/Wants",
+        "amount_formatted": "Rp 61.000.0"
+      },
+      {
+        "transaction_date": "2025-07-30",
+        "description": "Parkir",
+        "amount": 23200.0,
+        "label": 0,
+        "category_type": "Needs",
+        "amount_formatted": "Rp 23.200.0"
+      },
+      {
+        "transaction_date": "2026-05-29",
+        "description": "Elektronik",
+        "amount": 27200.0,
+        "label": 1,
+        "category_type": "Impulse/Wants",
+        "amount_formatted": "Rp 27.200.0"
+      },
+      {
+        "transaction_date": "2026-05-29",
+        "description": "Elektronik",
+        "amount": 27200.0,
+        "label": 1,
+        "category_type": "Impulse/Wants",
+        "amount_formatted": "Rp 27.200.0"
+      },
+      {
+        "transaction_date": "2025-10-15",
+        "description": "Tol",
+        "amount": 178100.0,
+        "label": 0,
+        "category_type": "Needs",
+        "amount_formatted": "Rp 178.100.0"
+      }
+    ]
+  }
+}

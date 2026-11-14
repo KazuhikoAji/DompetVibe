@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DompetVibe — Sahabat Cerdas Pengatur Keuangan & Gaya Belanjamu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#F5F3FF', 100: '#EDE9FE', 200: '#DDD6FE', 300: '#C4B5FD', 400: '#A78BFA', 500: '#8B5CF6', 600: '#7C3AED', 700: '#6D28D9' },
+                        mint: { 50: '#ECFDF5', 100: '#D1FAE5', 200: '#A7F3D0', 500: '#10B981', 600: '#059669' },
+                        rose: { 50: '#FFF1F2', 100: '#FFE4E6', 200: '#FECDD3', 500: '#F43F5E', 600: '#E11D48' },
+                        amber: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 500: '#F59E0B', 600: '#D97706' },
+                        sky: { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 500: '#0284C7', 600: '#0369A1' },
+                        pastel: {
+                            lavender: '#F5F3FF',
+                            lavenderBorder: '#DDD6FE',
+                            mint: '#ECFDF5',
+                            mintBorder: '#A7F3D0',
+                            rose: '#FFF1F2',
+                            roseBorder: '#FECDD3',
+                            amber: '#FFFBEB',
+                            amberBorder: '#FDE68A',
+                            sky: '#F0F9FF',
+                            skyBorder: '#BAE6FD'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_dompetvibe.png') }}">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans selection:bg-purple-100 selection:text-purple-700 min-h-screen flex">
+
+    <!-- MOBILE SIDEBAR BACKDROP OVERLAY -->
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- ========================================== -->
+    <!-- SIDEBAR NAVIGATION MENU (DESKTOP & MOBILE)  -->
+    <!-- ========================================== -->
+    <aside id="main-sidebar" class="fixed top-0 bottom-0 left-0 z-50 w-72 bg-white/95 backdrop-blur-md border-r border-purple-100 flex flex-col justify-between transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none select-none">
+        <!-- Sidebar Top: Logo & Main Navigation -->
+        <div class="p-5 space-y-5 overflow-y-auto flex-1">
+            <!-- Brand Logo Header with Cute Mascot Logo -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="switchNavigation('home')">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-100 via-pink-50 to-indigo-50 border border-purple-100/90 flex items-center justify-center p-1 shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                        <img src="{{ url_for('static', filename='img/logo_dompetvibe.png') }}" alt="DompetVibe.ai Logo" class="w-full h-full object-contain animate-float">
+                    </div>
+                    <div>
+                        <h1 class="text-base font-black tracking-tight text-slate-900 leading-tight">
+                            DompetVibe<span class="text-purple-600">.ai</span>
+                        </h1>
+                        <p class="text-[11px] text-slate-400 font-semibold tracking-wide flex items-center gap-1">
+                            <span>Sahabat Finansial Pintar</span>
+                            <span class="text-xs">✨</span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Close / Hide Button (Desktop & Mobile) -->
+                <button onclick="toggleSidebar()" class="p-1.5 rounded-xl text-slate-400 hover:text-purple-700 hover:bg-purple-50 transition-colors cursor-pointer" title="Sembunyikan Sidebar (Ctrl + B)">
+                    <i data-lucide="panel-left-close" class="w-5 h-5 hidden lg:block"></i>
+                    <i data-lucide="x" class="w-5 h-5 lg:hidden"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1.5 text-xs font-semibold">
+                <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider px-3.5 block mb-2">Menu Navigasi</span>
+
+                <!-- Menu 1: Home (Active by default) -->
+                <button id="nav-menu-home" onclick="switchNavigation('home')" class="w-full text-left px-3.5 py-3 rounded-2xl transition-all flex items-center justify-between group cursor-pointer bg-purple-50 text-purple-700 font-bold border-l-4 border-purple-600 shadow-2xs">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-purple-600 shadow-2xs group-hover:scale-110 transition-transform text-sm">
+                            🏠
+                        </span>
+                        <div>
+                            <span class="block text-xs font-bold leading-tight">Beranda</span>
+                            <span class="text-[10px] opacity-80 font-medium leading-tight">Informasi &amp; Fitur Utama</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+                </button>
+
+                <!-- Menu 2: Analisis Mutasi -->
+                <button id="nav-menu-analysis" onclick="switchNavigation('analysis')" class="w-full text-left px-3.5 py-3 rounded-2xl transition-all flex items-center justify-between group cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-purple-50/50 font-medium border-l-4 border-transparent">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-2xs group-hover:scale-110 transition-transform text-sm">
+                            📊
+                        </span>
+                        <div>
+                            <span class="block text-xs font-bold leading-tight">Analisis Mutasi</span>
+                            <span class="text-[10px] opacity-80 font-medium leading-tight">Unggah &amp; Cek Arus Kas</span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-purple-100 text-purple-700">Multi-Bulan</span>
+                </button>
+
+                <!-- Menu 3: Spending Personas -->
+                <button id="nav-menu-personas" onclick="switchNavigation('personas')" class="w-full text-left px-3.5 py-3 rounded-2xl transition-all flex items-center justify-between group cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-purple-50/50 font-medium border-l-4 border-transparent">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-purple-600 shadow-2xs group-hover:scale-110 transition-transform text-sm">
+                            💡
+                        </span>
+                        <div>
+                            <span class="block text-xs font-bold leading-tight">Gaya Belanja</span>
+                            <span class="text-[10px] opacity-80 font-medium leading-tight">4 Karakter Finansial</span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-pink-100 text-pink-700">4 Profil</span>
+                </button>
+
+                <!-- Menu 4: Tentang Kami -->
+                <button id="nav-menu-about" onclick="switchNavigation('about')" class="w-full text-left px-3.5 py-3 rounded-2xl transition-all flex items-center justify-between group cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-purple-50/50 font-medium border-l-4 border-transparent">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-2xs group-hover:scale-110 transition-transform text-sm">
+                            📖
+                        </span>
+                        <div>
+                            <span class="block text-xs font-bold leading-tight">Tentang Kami</span>
+                            <span class="text-[10px] opacity-80 font-medium leading-tight">Misi &amp; Keamanan Privasi</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+                </button>
+
+                <!-- Menu 5: Tanya Jawab & Kontak -->
+                <button id="nav-menu-contact" onclick="switchNavigation('contact')" class="w-full text-left px-3.5 py-3 rounded-2xl transition-all flex items-center justify-between group cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-purple-50/50 font-medium border-l-4 border-transparent">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-2xs group-hover:scale-110 transition-transform text-sm">
+                            💬
+                        </span>
+                        <div>
+                            <span class="block text-xs font-bold leading-tight">Tanya Jawab &amp; Kontak</span>
+                            <span class="text-[10px] opacity-80 font-medium leading-tight">Panduan Unduh &amp; Bantuan</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+                </button>
+            </nav>
+
+            <!-- Cute Pastel Tips Card in Sidebar -->
+            <div class="p-4 rounded-3xl bg-pastel-lavender border border-pastel-lavenderBorder space-y-2.5">
+                <div class="flex items-center gap-2">
+                    <span class="text-base animate-bounce-soft">✨</span>
+                    <span class="text-[11px] font-black text-purple-900 uppercase tracking-wide">Tips Dompet Sehat</span>
+                </div>
+                <p class="text-[11px] text-purple-950/80 leading-relaxed font-medium">
+                    Terapkan rumus <strong>50/30/20</strong>: 50% untuk Kebutuhan Pokok, 30% Keinginan &amp; Hiburan, dan minimal 20% Tabungan di awal gajian.
+                </p>
+                <button onclick="startMutationFlow()" class="w-full py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] transition-colors flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                    <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                    <span>Coba Analisis Sekarang</span>
+                </button>
+            </div>
+
+            <!-- Cute 3D Piggy Fitness Mascot (Ukuran proporsional setara card Tips Dompet Sehat) -->
+            <div class="w-full flex flex-col items-center justify-center py-1">
+                <img src="{{ url_for('static', filename='img/piggy_fitness.png') }}" alt="Mascot Dompet Sehat" class="w-full max-w-[240px] h-44 sm:h-48 object-contain animate-float drop-shadow-md select-none pointer-events-none">
+            </div>
+        </div>
+
+        <!-- Sidebar Bottom: Friendly Privacy Guarantee -->
+        <div class="p-4 border-t border-purple-100 bg-purple-50/30 space-y-1.5 shrink-0">
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-[11px] text-purple-800 font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    100% Aman &amp; Akurat
+                </span>
+                <span class="text-[10px] font-bold text-purple-400">Tanpa Password</span>
+            </div>
+            <p class="text-[10px] text-slate-500 leading-tight">
+                Berkas mutasi dianalisis secara lokal. Kami <strong>tidak pernah meminta password atau PIN bank</strong> Anda.
+            </p>
+        </div>
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT WRAPPER AREA                  -->
+    <!-- ========================================== -->
+    <div id="main-content-wrapper" class="flex-1 flex flex-col min-h-screen lg:pl-72 w-full transition-all">
+
+        <!-- TOP BAR HEADER -->
+        <header class="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-purple-100 px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Universal Sidebar Toggle Button (Desktop & Mobile) -->
+                <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-all border border-slate-200/80 hover:border-purple-200 flex items-center justify-center cursor-pointer shadow-2xs group" title="Sembunyikan / Tampilkan Menu Navigasi (Ctrl + B)">
+                    <i data-lucide="panel-left-close" id="sidebar-toggle-icon" class="w-5 h-5 group-hover:scale-105 transition-transform"></i>
+                </button>
+
+                <!-- Brand Logo (Visible on Mobile or when Desktop Sidebar is Collapsed) -->
+                <div id="topbar-brand" class="hidden items-center gap-2 cursor-pointer group" onclick="switchNavigation('home')" title="Ke Beranda">
+                    <div class="w-8 h-8 rounded-xl bg-purple-50 border border-purple-100 p-1 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <img src="{{ url_for('static', filename='img/logo_dompetvibe.png') }}" alt="DompetVibe" class="w-full h-full object-contain">
+                    </div>
+                    <span class="text-sm font-black text-slate-900 tracking-tight hidden sm:inline">DompetVibe<span class="text-purple-600">.ai</span></span>
+                </div>
+            </div>
+
+            <!-- Quick Action Buttons & User Profile -->
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <!-- Search Input Pill -->
+                <div class="relative hidden sm:block w-40 md:w-52 lg:w-60">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <input type="text" placeholder="Pencarian" class="w-full pl-8 pr-3 py-1.5 rounded-full border border-slate-200 bg-slate-50/70 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-purple-400 focus:bg-white transition-all shadow-2xs">
+                </div>
+
+                <!-- Bell Notification -->
+                <button class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-50 hover:bg-purple-50 border border-slate-200 text-slate-600 hover:text-purple-700 flex items-center justify-center transition-colors cursor-pointer" title="Notifikasi">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-pink-500 ring-2 ring-white"></span>
+                </button>
+
+                <!-- User Profile Avatar -->
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-purple-200 shadow-2xs cursor-pointer hover:scale-105 transition-transform shrink-0" title="Profil Pengguna">
+                    <img src="{{ url_for('static', filename='img/avatar_user.png') }}" alt="Avatar Pengguna" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Analisis Mutasi CTA Button -->
+                <button onclick="startMutationFlow()" class="px-3.5 sm:px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-105 cursor-pointer whitespace-nowrap">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>Analisis Mutasi</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
+
+            <!-- ==================================================================== -->
+            <!-- MENU 1: BERANDA (HOME) - PASTEL HERO & CUTE ANIMATIONS               -->
+            <!-- ==================================================================== -->
+            <div id="section-home-view" class="space-y-10">
+
+                <!-- PASTEL HERO BANNER SECTION DENGAN 3D ACCENTS & ILUSTRASI LENGKAP -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#f3e8ff] via-[#fce7f3] to-[#ffedd5] text-slate-800 p-6 sm:p-8 lg:p-10 shadow-sm border border-purple-200/80 flex flex-col lg:flex-row items-center justify-between gap-8">
+                    <!-- Soft Pastel Ambient Glow Orbs -->
+                    <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-purple-300/30 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-pink-300/30 blur-3xl pointer-events-none"></div>
+
+                    <!-- Left Column: Copy, Buttons & Badges -->
+                    <div class="relative z-10 flex-1 space-y-4 max-w-2xl">
+                        <!-- Headline -->
+                        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-black tracking-tight text-slate-900 leading-[1.2]">
+                            Ketahui Kebiasaan Belanjamu,<br class="hidden sm:inline">
+                            Cek Kesehatan Dompet dalam Sekejap! 💰✨
+                        </h1>
+
+                        <!-- Subtitle in Friendly Indonesian -->
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                            Pernah merasa uang gajian tiba-tiba habis? Yuk, unggah berkas mutasi bank atau e-wallet-mu dan biarkan DompetVibe bantu kamu deteksi bocor halus secara otomatis &amp; solutif!
+                        </p>
+
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-wrap items-center gap-3 pt-1">
+                            <button onclick="startMutationFlow()" class="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-purple-500/20 transition-all hover:scale-[1.02] cursor-pointer">
+                                <span>🚀</span>
+                                <span>Mulai Analisis Mutasimu Sekarang ✨</span>
+                            </button>
+                            <button onclick="exploreDemoPersona('sample_estatement_mbca.pdf', 'Dokumen Asli m-BCA (.PDF)')" class="px-4 py-3 rounded-2xl bg-white hover:bg-purple-50 text-slate-700 font-bold text-xs sm:text-sm border border-purple-200 shadow-2xs transition-all hover:scale-[1.02] flex items-center gap-2 cursor-pointer">
+                                <span>📄</span>
+                                <span>Coba Contoh PDF m-BCA</span>
+                            </button>
+                            <button onclick="switchNavigation('personas')" class="px-3 py-3 rounded-2xl text-purple-700 hover:text-purple-900 font-bold text-xs sm:text-sm transition-colors flex items-center gap-1.5 cursor-pointer">
+                                <span>💡 4 Gaya Belanja →</span>
+                            </button>
+                        </div>
+
+                        <!-- 4 Friendly Pastel Quick Highlight Cards in a row -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">
+                            <div class="p-2.5 rounded-2xl bg-white/90 backdrop-blur-xs border border-purple-100 shadow-2xs flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center text-sm shrink-0">
+                                    🔒
+                                </div>
+                                <div class="leading-tight">
+                                    <span class="text-xs font-black text-slate-800 block">100% Aman</span>
+                                    <span class="text-[10px] text-slate-500 font-medium">Tanpa PIN &amp; Password</span>
+                                </div>
+                            </div>
+                            <div class="p-2.5 rounded-2xl bg-white/90 backdrop-blur-xs border border-purple-100 shadow-2xs flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-sm shrink-0">
+                                    📅
+                                </div>
+                                <div class="leading-tight">
+                                    <span class="text-xs font-black text-slate-800 block">Multi-Bulan</span>
+                                    <span class="text-[10px] text-slate-500 font-medium">Periode Tren &amp; Rata-rata</span>
+                                </div>
+                            </div>
+                            <div class="p-2.5 rounded-2xl bg-white/90 backdrop-blur-xs border border-purple-100 shadow-2xs flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-pink-100 flex items-center justify-center text-sm shrink-0">
+                                    🐷
+                                </div>
+                                <div class="leading-tight">
+                                    <span class="text-xs font-black text-slate-800 block">Lucu Jujur</span>
+                                    <span class="text-[10px] text-slate-500 font-medium">Temukan Bocor Halus</span>
+                                </div>
+                            </div>
+                            <div class="p-2.5 rounded-2xl bg-white/90 backdrop-blur-xs border border-purple-100 shadow-2xs flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-sm shrink-0">
+                                    💡
+                                </div>
+                                <div class="leading-tight">
+                                    <span class="text-xs font-black text-slate-800 block">Tips Ramah</span>
+                                    <span class="text-[10px] text-slate-500 font-medium">Bahasanya Mudah Dimengerti</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Hero Character Illustration -->
+                    <div class="relative z-10 shrink-0 w-full lg:w-[420px] flex items-center justify-center">
+                        <img src="{{ url_for('static', filename='img/hero_character.png') }}" alt="DompetVibe Hero Character" class="w-full max-w-[360px] lg:max-w-[420px] object-contain drop-shadow-md hover:scale-105 transition-transform duration-300">
+                    </div>
+                </div>
+
+                <!-- DUA KOLOM UTAMA: KENALI KARAKTER FINANSIAL (KIRI) & ALUR PENGGUNAAN (KANAN) -->
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+
+                    <!-- KOLOM KIRI: KENALI KARAKTER FINANSIAL (7/12 COLS) -->
+                    <div class="xl:col-span-7 space-y-3.5">
+                        <div>
+                            <span class="text-[11px] font-black text-purple-600 uppercase tracking-wider block">Kenali Karakter Finansial</span>
+                            <h2 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">Kamu Tipe Belanja yang Mana?</h2>
+                        </div>
+
+                        <!-- 4 Character Cards in 4 columns -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <!-- Card 1: Si Mindful Planner -->
+                            <div onclick="openPersonaModal('mindful')" class="rounded-2xl bg-[#f0fdf4] border border-[#dcfce7] p-2.5 flex flex-col justify-between hover-lift shadow-2xs group cursor-pointer">
+                                <div class="space-y-2">
+                                    <div class="w-full h-32 rounded-xl overflow-hidden bg-white/70 flex items-center justify-center">
+                                        <img src="{{ url_for('static', filename='img/persona_mindful.png') }}" alt="Si Mindful Planner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </div>
+                                    <h4 class="font-black text-slate-900 text-xs sm:text-[13px] text-center leading-tight">
+                                        Si Mindful Planner
+                                    </h4>
+                                </div>
+                                <button onclick="event.stopPropagation(); openPersonaModal('mindful')" class="w-full mt-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer">
+                                    <span>Coba Profil Ini</span>
+                                    <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+
+                            <!-- Card 2: Anak Kopi & Kafe -->
+                            <div onclick="openPersonaModal('kopi')" class="rounded-2xl bg-[#fffbeb] border border-[#fef3c7] p-2.5 flex flex-col justify-between hover-lift shadow-2xs group cursor-pointer">
+                                <div class="space-y-2">
+                                    <div class="w-full h-32 rounded-xl overflow-hidden bg-white/70 flex items-center justify-center">
+                                        <img src="{{ url_for('static', filename='img/persona_kopi.png') }}" alt="Anak Kopi & Kafe" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </div>
+                                    <h4 class="font-black text-slate-900 text-xs sm:text-[13px] text-center leading-tight">
+                                        Anak Kopi &amp; Kafe
+                                    </h4>
+                                </div>
+                                <button onclick="event.stopPropagation(); openPersonaModal('kopi')" class="w-full mt-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer">
+                                    <span>Coba Profil Ini</span>
+                                    <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+
+                            <!-- Card 3: Pemburu Promo -->
+                            <div onclick="openPersonaModal('promo')" class="rounded-2xl bg-[#faf5ff] border border-[#f3e8ff] p-2.5 flex flex-col justify-between hover-lift shadow-2xs group cursor-pointer">
+                                <div class="space-y-2">
+                                    <div class="w-full h-32 rounded-xl overflow-hidden bg-white/70 flex items-center justify-center">
+                                        <img src="{{ url_for('static', filename='img/persona_promo.png') }}" alt="Pemburu Promo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </div>
+                                    <h4 class="font-black text-slate-900 text-xs sm:text-[13px] text-center leading-tight">
+                                        Pemburu Promo
+                                    </h4>
+                                </div>
+                                <button onclick="event.stopPropagation(); openPersonaModal('promo')" class="w-full mt-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer">
+                                    <span>Coba Profil Ini</span>
+                                    <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+
+                            <!-- Card 4: Sahabat Paylater -->
+                            <div onclick="openPersonaModal('paylater')" class="rounded-2xl bg-[#fff1f2] border border-[#ffe4e6] p-2.5 flex flex-col justify-between hover-lift shadow-2xs group cursor-pointer">
+                                <div class="space-y-2">
+                                    <div class="w-full h-32 rounded-xl overflow-hidden bg-white/70 flex items-center justify-center">
+                                        <img src="{{ url_for('static', filename='img/persona_paylater.png') }}" alt="Sahabat Paylater" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </div>
+                                    <h4 class="font-black text-slate-900 text-xs sm:text-[13px] text-center leading-tight">
+                                        Sahabat Paylater
+                                    </h4>
+                                </div>
+                                <button onclick="event.stopPropagation(); openPersonaModal('paylater')" class="w-full mt-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer">
+                                    <span>Coba Profil Ini</span>
+                                    <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KOLOM KANAN: ALUR PENGGUNAAN (5/12 COLS) -->
+                    <div class="xl:col-span-5 space-y-3.5">
+                        <div class="text-left xl:text-center">
+                            <span class="text-[11px] font-black text-purple-600 uppercase tracking-wider block">Alur Penggunaan</span>
+                            <h2 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">Hanya 3 Langkah Mudah &amp; Cepat</h2>
+                        </div>
+
+                        <!-- 3 Steps with connecting curved dashed arrows -->
+                        <div class="relative grid grid-cols-3 gap-3 items-stretch">
+                            <!-- Dashed Arrow 1 -> 2 (Desktop) -->
+                            <div class="hidden sm:block absolute left-[30%] top-8 z-10 pointer-events-none w-10">
+                                <svg class="w-full h-7 text-purple-400" viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3">
+                                    <path d="M2 16 C14 2, 26 2, 38 14" />
+                                    <path d="M33 11 L38 14 L34 18" fill="currentColor" stroke="none" />
+                                </svg>
+                            </div>
+
+                            <!-- Dashed Arrow 2 -> 3 (Desktop) -->
+                            <div class="hidden sm:block absolute left-[64%] top-8 z-10 pointer-events-none w-10">
+                                <svg class="w-full h-7 text-purple-400" viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3">
+                                    <path d="M2 16 C14 2, 26 2, 38 14" />
+                                    <path d="M33 11 L38 14 L34 18" fill="currentColor" stroke="none" />
+                                </svg>
+                            </div>
+
+                            <!-- Step 1 Card -->
+                            <div onclick="startMutationFlow()" class="rounded-2xl bg-white border border-slate-200/90 p-3 flex flex-col items-center justify-between text-center hover-lift shadow-2xs cursor-pointer group">
+                                <div class="w-full h-24 rounded-xl flex items-center justify-center p-1">
+                                    <img src="{{ url_for('static', filename='img/step_mutasi.png') }}" alt="Pilih Berkas Mutasi" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-xs mt-2 leading-tight">
+                                    Pilih Berkas Mutasi
+                                </h3>
+                            </div>
+
+                            <!-- Step 2 Card -->
+                            <div onclick="startMutationFlow()" class="rounded-2xl bg-white border border-slate-200/90 p-3 flex flex-col items-center justify-between text-center hover-lift shadow-2xs cursor-pointer group">
+                                <div class="w-full h-24 rounded-xl flex items-center justify-center p-1">
+                                    <img src="{{ url_for('static', filename='img/step_analysis.png') }}" alt="Periksa Rincian & Arus Kas" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-xs mt-2 leading-tight">
+                                    Periksa Rincian &amp; Arus Kas
+                                </h3>
+                            </div>
+
+                            <!-- Step 3 Card -->
+                            <div onclick="startMutationFlow()" class="rounded-2xl bg-white border border-slate-200/90 p-3 flex flex-col items-center justify-between text-center hover-lift shadow-2xs cursor-pointer group">
+                                <div class="w-full h-24 rounded-xl flex items-center justify-center p-1">
+                                    <img src="{{ url_for('static', filename='img/step_solution.png') }}" alt="Dapatkan Solusi Finansialmu" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-xs mt-2 leading-tight">
+                                    Dapatkan Solusi Finansialmu
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 4 KARTU FITUR UNGGULAN PASTEL DENGAN ANIMASI HOVER LIFT -->
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <span class="text-xs font-black text-purple-600 uppercase tracking-wider block">Kenapa DompetVibe Berbeda?</span>
+                            <h2 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">Ketahui Kondisi Dompetmu Tanpa Ribet</h2>
+                        </div>
+                        <span class="text-xs font-medium text-slate-400">Dirancang khusus untuk pengguna perbankan &amp; gaya hidup Indonesia</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Card 1 -->
+                        <div class="p-5 rounded-3xl bg-white border border-slate-200/80 hover-lift space-y-3">
+                            <div class="w-12 h-12 rounded-2xl bg-pastel-sky text-sky-600 flex items-center justify-center font-bold text-2xl shadow-2xs">
+                                📄
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-sm">Unggah e-Statement Bebas Pusing</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Cukup unduh mutasi dari m-BCA, Permata ME, Mandiri, BRI, BNI, GoPay, atau ShopeePay (.pdf, .xlsx, .csv). Data langsung terbaca rapi dalam sekejap tanpa salah ketik.
+                            </p>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="p-5 rounded-3xl bg-white border border-slate-200/80 hover-lift space-y-3">
+                            <div class="w-12 h-12 rounded-2xl bg-pastel-mint text-mint-600 flex items-center justify-center font-bold text-2xl shadow-2xs">
+                                📊
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-sm">Pantau Tren Pengeluaran Bulanan</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Mau unggah 2, 3, atau 6 bulan sekaligus? Bisa! DompetVibe otomatis mengelompokkan data per bulan dan menampilkan rata-rata pengeluaran serta tren kestabilan tabunganmu.
+                            </p>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="p-5 rounded-3xl bg-white border border-slate-200/80 hover-lift space-y-3">
+                            <div class="w-12 h-12 rounded-2xl bg-pastel-amber text-amber-600 flex items-center justify-center font-bold text-2xl shadow-2xs">
+                                🛡️
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-sm">Cek Tingkat Kendali Belanja</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Pahami seberapa kuat rem pengeluaranmu: apakah berada di zona <strong>Aman</strong>, perlu <strong>Waspada</strong>, rawan <strong>Impulsif</strong>, atau sudah masuk kondisi <strong>Kritis</strong>.
+                            </p>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="p-5 rounded-3xl bg-white border border-slate-200/80 hover-lift space-y-3">
+                            <div class="w-12 h-12 rounded-2xl bg-pastel-lavender text-purple-600 flex items-center justify-center font-bold text-2xl shadow-2xs">
+                                💡
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-sm">Simulasi &amp; Tips Penghematan</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Gunakan slider interaktif untuk melihat seberapa banyak uang yang bisa kamu selamatkan dalam 1 tahun jika sedikit mengerem pos belanja keinginan dan jajan harian.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM CALL TO ACTION BANNER -->
+                <div class="rounded-3xl bg-gradient-to-r from-purple-500 via-pink-400 to-rose-400 p-7 sm:p-9 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md shadow-purple-300/30">
+                    <div class="space-y-1.5 text-center sm:text-left">
+                        <h3 class="text-xl sm:text-2xl font-black tracking-tight">Siap Memperbaiki Kondisi Keuanganmu?</h3>
+                        <p class="text-xs sm:text-sm text-purple-50 font-normal">Coba sekarang dengan mutasi rekeningmu atau uji langsung menggunakan data sampel gratis.</p>
+                    </div>
+                    <button onclick="startMutationFlow()" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-purple-700 font-black text-xs sm:text-sm shadow-md transition-all hover:scale-105 whitespace-nowrap cursor-pointer">
+                        ✨ Buka Analisis Mutasi
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- MENU 2: ANALISIS MUTASI (ALUR 6 LANGKAH - UPLOAD -> HASIL -> TIPS)   -->
+            <!-- ==================================================================== -->
+            <div id="section-main-flow" class="hidden space-y-8">
+
+                <!-- LANGKAH 1: UPLOAD FILE MUTASI -->
+                <section class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-2xl bg-purple-100 text-purple-700 font-black text-xs flex items-center justify-center">1</span>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900">Unggah Berkas Mutasi Bank / E-Wallet</h2>
+                                <p class="text-xs text-slate-400">Pilih satu atau beberapa berkas mutasi digitalmu (.csv, .xlsx, atau .pdf)</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 w-fit">
+                            Format Asli Tanpa OCR
+                        </span>
+                    </div>
+
+                    <!-- Dropzone Area -->
+                    <div id="dropzone" class="border-2 border-dashed border-purple-200 hover:border-purple-400 bg-purple-50/20 hover:bg-purple-50/40 rounded-3xl p-7 text-center cursor-pointer transition-all group">
+                        <input type="file" id="file-input" class="hidden" accept=".csv,.xlsx,.xls,.pdf" multiple>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-purple-600 shadow-sm group-hover:scale-110 transition-transform text-2xl">
+                                📂
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Klik untuk memilih satu atau beberapa berkas, atau seret ke sini</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Mendukung berkas e-Statement dari BCA, Permata, Mandiri, BRI, BNI, GoPay, ShopeePay (.pdf, .xlsx, .csv)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Samples Pills -->
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 pt-1 text-xs">
+                        <span class="text-slate-400 font-semibold whitespace-nowrap">Atau Coba Data Mutasi Contoh:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button onclick="loadSampleFile('sample_estatement_mbca.pdf', 'Dokumen Asli m-BCA (.PDF)')" class="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-colors border border-purple-200 flex items-center gap-1 cursor-pointer">
+                                📄 Coba PDF m-BCA
+                            </button>
+                            <button onclick="loadSampleFile('real_mutasi_user_6d68.csv', 'Pengguna Riil #1 (Pola Harian & Sembako)')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-purple-50 hover:text-purple-600 text-slate-700 text-xs font-semibold transition-colors border border-slate-200/60 cursor-pointer">
+                                🛒 Pola Harian
+                            </button>
+                            <button onclick="loadSampleFile('real_mutasi_user_0929.xlsx', 'Pengguna Riil #2 (Excel - Kuliner & Kafe)')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-purple-50 hover:text-purple-600 text-slate-700 text-xs font-semibold transition-colors border border-slate-200/60 cursor-pointer">
+                                ☕ Kafe &amp; Kuliner (Excel)
+                            </button>
+                            <button onclick="loadSampleFile('real_mutasi_user_14c9.csv', 'Pengguna Riil #3 (E-Commerce & Belanja)')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-purple-50 hover:text-purple-600 text-slate-700 text-xs font-semibold transition-colors border border-slate-200/60 cursor-pointer">
+                                🛍️ Belanja Online
+                            </button>
+                            <button onclick="loadSampleFile('mutasi_raja_paylater.csv', 'Kasus Uji: Cicilan Paylater & Malam')" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors border border-rose-200 cursor-pointer">
+                                💳 Kasus Paylater
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="upload-loading-spinner" class="hidden p-4 text-center text-xs font-semibold text-purple-600 animate-pulse flex items-center justify-center gap-2">
+                        <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                        <span>Sedang membaca dan mengelompokkan transaksi mutasi Anda...</span>
+                    </div>
+                </section>
+
+                <!-- LANGKAH 2: TAMPILAN MUTASI & DAFTAR TRANSAKSI -->
+                <section id="section-step-2" class="hidden bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-2xl bg-emerald-100 text-emerald-700 font-black text-xs flex items-center justify-center">2</span>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900">Rincian Transaksi yang Berhasil Terbaca</h2>
+                                <p id="tx-file-status-label" class="text-xs text-slate-400 font-medium">Berkas: -</p>
+                            </div>
+                        </div>
+                        <span id="tx-badge-count" class="text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-200 w-fit">
+                            0 Transaksi
+                        </span>
+                    </div>
+
+                    <!-- BANNER STATUS LIKUIDITAS ARUS KAS -->
+                    <div id="cashflow-health-banner" class="hidden p-3.5 rounded-2xl border text-xs font-semibold flex items-center justify-between gap-3 transition-all">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- PILIH BULAN TRANSAKSI (MULTI-MONTH FILTER TABS) -->
+                    <div id="monthly-filter-container" class="hidden p-4 bg-slate-50/90 border border-slate-200/80 rounded-2xl space-y-2.5 shadow-2xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-purple-600"></i>
+                                    Pilih Periode Transaksi:
+                                </span>
+                                <span id="monthly-filter-badge" class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-[10px] font-black">
+                                    Multi-Bulan
+                                </span>
+                            </div>
+                            <span id="monthly-mode-indicator" class="text-[11px] font-semibold text-slate-500">
+                                Menampilkan Semua Transaksi (Rata-rata Bulanan)
+                            </span>
+                        </div>
+
+                        <!-- Month Selection Pills List -->
+                        <div id="month-pills-list" class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- KARTU TREN ANALISIS FINANSIAL MULTI-BULAN -->
+                    <div id="multi-month-trend-card" class="hidden p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-indigo-50 border border-purple-200/80 space-y-2.5 shadow-2xs">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">📈</span>
+                                <span class="text-xs font-black text-purple-950 uppercase tracking-wider">Tren Analisis Finansial Multi-Bulan</span>
+                            </div>
+                            <span id="multi-month-active-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-600 text-white shadow-xs">
+                                3 Bulan Terpantau
+                            </span>
+                        </div>
+                        <p id="multi-month-narrative-text" class="text-xs text-purple-950 leading-relaxed font-medium">
+                            <!-- AI Multi-Month Trend Narrative -->
+                        </p>
+                        <!-- Mini Cards for Each Month Comparison -->
+                        <div id="monthly-micro-cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pt-1 text-xs">
+                            <!-- Mini cards populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 5 KARTU STATISTIK FINANSIAL RINGKAS DENGAN WARNA PASTEL -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                        <div class="p-3.5 rounded-2xl bg-pastel-sky border border-pastel-skyBorder text-center flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold text-sky-700 block uppercase tracking-wider">Total Pemasukan</span>
+                                <span id="stat-income-val" class="text-base sm:text-lg font-black text-sky-800 mt-0.5 block">Rp 0</span>
+                            </div>
+                            <span id="stat-income-sub" class="text-[10px] text-sky-600/80 font-bold mt-1 block"></span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-center flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold text-slate-500 block uppercase tracking-wider">Total Pengeluaran</span>
+                                <span id="stat-expense-val" class="text-base sm:text-lg font-black text-slate-800 mt-0.5 block">Rp 0</span>
+                            </div>
+                            <span id="stat-expense-sub" class="text-[10px] text-slate-500 font-bold mt-1 block"></span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-pastel-amber border border-pastel-amberBorder text-center flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold text-amber-700 block uppercase tracking-wider">Sisa Kas / Tabungan</span>
+                                <span id="stat-cashflow-val" class="text-base sm:text-lg font-black text-amber-800 mt-0.5 block">Rp 0</span>
+                            </div>
+                            <span id="stat-cashflow-sub" class="text-[10px] text-amber-700 font-bold mt-1 block"></span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-pastel-mint border border-pastel-mintBorder text-center flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold text-mint-700 block uppercase tracking-wider">Kebutuhan Pokok</span>
+                                <span id="stat-needs-val" class="text-base sm:text-lg font-black text-mint-800 mt-0.5 block">Rp 0</span>
+                            </div>
+                            <span id="stat-needs-sub" class="text-[10px] text-mint-700 font-bold mt-1 block"></span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-pastel-rose border border-pastel-roseBorder text-center col-span-2 sm:col-span-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold text-rose-700 block uppercase tracking-wider">Belanja Keinginan</span>
+                                <span id="stat-wants-val" class="text-base sm:text-lg font-black text-rose-800 mt-0.5 block">Rp 0</span>
+                            </div>
+                            <span id="stat-wants-sub" class="text-[10px] text-rose-700 font-bold mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <!-- TABEL TRANSAKSI TERBACA -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-700">Daftar Transaksi Terbaca:</span>
+                                <span id="tx-display-counter" class="text-[11px] font-semibold text-slate-400"></span>
+                            </div>
+                            <input type="text" id="tx-search-box" onkeyup="filterTxTable()" placeholder="Cari keterangan / toko..." class="text-xs py-1.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-400 w-48 sm:w-64">
+                        </div>
+
+                        <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                            <table class="w-full text-left text-xs text-slate-600">
+                                <thead class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-100">
+                                    <tr>
+                                        <th class="py-2.5 px-3.5">Tanggal</th>
+                                        <th class="py-2.5 px-3.5">Keterangan Transaksi</th>
+                                        <th class="py-2.5 px-3.5">Nominal</th>
+                                        <th class="py-2.5 px-3.5">Arus Kas</th>
+                                        <th class="py-2.5 px-3.5">Kategori Anggaran</th>
+                                        <th class="py-2.5 px-3.5">Pos Pengeluaran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tx-table-body" class="divide-y divide-slate-100">
+                                    <!-- Dynamic rows via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- TOMBOL LIHAT SELENGKAPNYA / CIUTKAN -->
+                        <div id="tx-expand-btn-container" class="hidden text-center pt-1.5">
+                            <button id="tx-toggle-btn" onclick="toggleTxExpanded()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200/80 transition-all shadow-xs cursor-pointer">
+                                <span id="tx-toggle-text">Lihat Selengkapnya</span>
+                                <i id="tx-toggle-icon" data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LANGKAH 3: TOMBOL ANALISIS KEBIASAAN BELANJA -->
+                    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-purple-50/50 p-4 rounded-2xl border border-purple-100">
+                        <div class="text-xs">
+                            <span class="font-bold text-purple-900 block text-sm">Transaksi berhasil dibaca dengan rapi! ✨</span>
+                            <span class="text-slate-500">Klik tombol di samping untuk menganalisis kebiasaan belanja dan kesehatan dompetmu.</span>
+                        </div>
+                        <button onclick="executeAIAnalysis()" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-purple-200 transition-all hover:scale-[1.02] cursor-pointer">
+                            <span>✨</span>
+                            <span>3. Mulai Analisis Kebiasaan Belanja</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- LANGKAH 4, 5, 6: HASIL DIAGNOSIS, GRAFIK ALOKASI & SARAN FINANSIAL -->
+                <section id="section-analysis-results" class="hidden space-y-6">
+
+                    <!-- BANNER DOWNLOAD LAPORAN PDF -->
+                    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-800 text-white p-5 sm:p-6 shadow-md border border-purple-400/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
+                                <i data-lucide="file-down" class="w-6 h-6 text-purple-200"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-extrabold text-base sm:text-lg text-white tracking-tight">Unduh Laporan Eksekutif PDF</h3>
+                                    <span class="px-2 py-0.5 rounded-full bg-pink-500/80 text-[10px] font-black uppercase tracking-wider text-white">Visual &amp; Praktis</span>
+                                </div>
+                                <p class="text-xs text-slate-200 mt-0.5 leading-relaxed">
+                                    Rangkuman lengkap arus kas, speedometer risiko, alokasi pengeluaran, karakter finansial, dan simulasi penghematan dalam dokumen visual rapi.
+                                </p>
+                            </div>
+                        </div>
+                        <button id="btn-download-pdf" onclick="downloadAnalysisPDF()" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white text-purple-700 hover:bg-purple-50 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap shrink-0 group">
+                            <i data-lucide="download" class="w-4 h-4 text-purple-600 group-hover:translate-y-0.5 transition-transform"></i>
+                            <span id="btn-download-pdf-text">Download PDF Hasil Analisis</span>
+                        </button>
+                    </div>
+
+                    <!-- LANGKAH 4: HASIL KENDALI BELANJA & KARAKTER FINANSIAL -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-2xl bg-purple-100 text-purple-700 font-black text-xs flex items-center justify-center">4</span>
+                                <div>
+                                    <h2 class="text-base font-bold text-slate-900">Hasil Diagnosis: Tingkat Kendali Belanja &amp; Karakter Finansial</h2>
+                                    <p class="text-xs text-slate-400">Berdasarkan pola transaksi dan arus kas dari berkas mutasi yang kamu unggah.</p>
+                                </div>
+                            </div>
+                            <button onclick="downloadAnalysisPDF()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold transition-all hover:scale-105 cursor-pointer shadow-2xs">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Unduh PDF</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <!-- KARTU TINGKAT KENDALI BELANJA -->
+                            <div class="p-5 rounded-3xl bg-slate-50/80 border border-slate-100 flex flex-col justify-between space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tingkat Kendali Belanja</span>
+                                        <span id="monthly-risk-analysis-badge" class="hidden px-2 py-0.5 text-[10px] font-bold rounded-lg bg-purple-50 text-purple-700 border border-purple-200"></span>
+                                    </div>
+                                    <span id="risk-badge-result" class="px-3 py-1 text-xs font-black rounded-full border bg-emerald-100 text-emerald-800 border-emerald-300">Aman</span>
+                                </div>
+
+                                <!-- Speedometer Gauge -->
+                                <div class="relative w-44 h-44 mx-auto flex items-center justify-center my-1">
+                                    <canvas id="gaugeChart"></canvas>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-4">
+                                        <span id="gauge-score-result" class="text-3xl font-black text-slate-900 tracking-tight">15.0%</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Skor Risiko</span>
+                                    </div>
+                                </div>
+
+                                <p id="risk-desc-result" class="text-xs text-slate-600 text-center leading-relaxed">
+                                    Pola transaksi kamu terkendali dengan sangat baik dan seimbang dengan pemasukan.
+                                </p>
+                            </div>
+
+                            <!-- KARTU KARAKTER FINANSIAL (SPENDING PERSONA) -->
+                            <div class="p-5 rounded-3xl bg-slate-50/80 border border-slate-100 flex flex-col justify-between space-y-4">
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Karakter Finansial Kamu</span>
+                                        <span id="persona-badge-result" class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-purple-50 text-purple-700">Profil Finansial</span>
+                                    </div>
+
+                                    <div class="flex items-center gap-3.5 my-2">
+                                        <div id="persona-icon-result" class="w-16 h-16 rounded-2xl bg-white overflow-hidden flex items-center justify-center shadow-sm flex-shrink-0 animate-bounce-soft border border-purple-100 p-0.5">
+                                            <img id="persona-main-img" src="{{ url_for('static', filename='img/persona_mindful.png') }}" alt="Karakter Finansial" class="w-full h-full object-cover rounded-xl">
+                                        </div>
+                                        <div>
+                                            <h3 id="persona-title-result" class="font-black text-slate-900 text-base sm:text-lg leading-tight">Si Mindful Planner</h3>
+                                            <p id="persona-tagline-result" class="text-xs text-purple-600 font-bold mt-0.5">Disiplin &amp; Kebal Godaan Diskon</p>
+                                        </div>
+                                    </div>
+
+                                    <p id="persona-desc-result" class="text-xs text-slate-500 mt-2 leading-relaxed">
+                                        Pengeluaranmu terencana dan kontrol dirimu sangat kuat. Kamu jarang tergoda promo kilat atau tren barang viral di media sosial.
+                                    </p>
+                                </div>
+
+                                <div class="p-3 rounded-2xl bg-white border border-slate-100 text-xs">
+                                    <span class="font-bold text-slate-400 uppercase text-[10px] block mb-1">Ciri Khas Perilaku:</span>
+                                    <div class="flex flex-wrap gap-1.5" id="persona-chips-result">
+                                        <span class="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-semibold">Kontrol Diri Kuat</span>
+                                        <span class="px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 text-[11px] font-semibold">Bebas Cicilan</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- PERBANDINGAN 4 GAYA KARAKTER FINANSIAL DENGAN GAMBAR -->
+                        <div class="pt-5 border-t border-slate-100 space-y-3.5">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div>
+                                    <span class="text-[11px] font-black text-purple-600 uppercase tracking-wider block">Peta Perbandingan Karakter</span>
+                                    <h3 class="text-sm sm:text-base font-bold text-slate-900">4 Gaya Karakter Finansial &amp; Posisi Kebiasaan Belanjamu</h3>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-bold">
+                                    🎯 Highlight: Posisi Karakter Kamu
+                                </span>
+                            </div>
+
+                            <!-- 4 Cards Grid -->
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5" id="analysis-personas-grid">
+                                <!-- Card 0: Si Mindful Planner -->
+                                <div id="comp-persona-card-0" class="p-3.5 rounded-2xl border transition-all flex flex-col justify-between space-y-2.5 bg-slate-50/60 border-slate-200">
+                                    <div class="space-y-2">
+                                        <div class="w-full h-28 rounded-xl overflow-hidden bg-white/90 border border-slate-100 flex items-center justify-center p-1 shadow-2xs">
+                                            <img src="{{ url_for('static', filename='img/persona_mindful.png') }}" alt="Si Mindful Planner" class="w-full h-full object-cover rounded-lg">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-0.5">
+                                                <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm">Si Mindful Planner</h4>
+                                                <span id="comp-badge-0" class="hidden px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[9px] font-black tracking-wider uppercase">Kamu!</span>
+                                            </div>
+                                            <p class="text-[10px] text-emerald-600 font-bold">Disiplin &amp; Kebal Diskon</p>
+                                            <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">Kontrol diri tinggi, rasio tabungan aman &gt; 30%, bebas cicilan konsumtif.</p>
+                                        </div>
+                                    </div>
+                                    <div id="comp-pill-0" class="py-1 px-2 rounded-xl text-center text-[10px] font-medium bg-slate-100 text-slate-500">
+                                        Profil Lainnya
+                                    </div>
+                                </div>
+
+                                <!-- Card 1: Anak Kopi & Kafe -->
+                                <div id="comp-persona-card-1" class="p-3.5 rounded-2xl border transition-all flex flex-col justify-between space-y-2.5 bg-slate-50/60 border-slate-200">
+                                    <div class="space-y-2">
+                                        <div class="w-full h-28 rounded-xl overflow-hidden bg-white/90 border border-slate-100 flex items-center justify-center p-1 shadow-2xs">
+                                            <img src="{{ url_for('static', filename='img/persona_kopi.png') }}" alt="Anak Kopi & Kafe" class="w-full h-full object-cover rounded-lg">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-0.5">
+                                                <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm">Anak Kopi &amp; Kafe</h4>
+                                                <span id="comp-badge-1" class="hidden px-1.5 py-0.5 rounded-md bg-amber-600 text-white text-[9px] font-black tracking-wider uppercase">Kamu!</span>
+                                            </div>
+                                            <p class="text-[10px] text-amber-600 font-bold">Kopi &amp; Jajan Santai</p>
+                                            <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">Kebocoran halus pada pos kuliner, delivery daring, dan nongkrong.</p>
+                                        </div>
+                                    </div>
+                                    <div id="comp-pill-1" class="py-1 px-2 rounded-xl text-center text-[10px] font-medium bg-slate-100 text-slate-500">
+                                        Profil Lainnya
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Promo & FOMO Trend Hunter -->
+                                <div id="comp-persona-card-2" class="p-3.5 rounded-2xl border transition-all flex flex-col justify-between space-y-2.5 bg-slate-50/60 border-slate-200">
+                                    <div class="space-y-2">
+                                        <div class="w-full h-28 rounded-xl overflow-hidden bg-white/90 border border-slate-100 flex items-center justify-center p-1 shadow-2xs">
+                                            <img src="{{ url_for('static', filename='img/persona_promo.png') }}" alt="Promo &amp; FOMO Hunter" class="w-full h-full object-cover rounded-lg">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-0.5">
+                                                <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm">Promo &amp; FOMO Hunter</h4>
+                                                <span id="comp-badge-2" class="hidden px-1.5 py-0.5 rounded-md bg-purple-600 text-white text-[9px] font-black tracking-wider uppercase">Kamu!</span>
+                                            </div>
+                                            <p class="text-[10px] text-purple-600 font-bold">Tanggal Kembar &amp; Tren Viral</p>
+                                            <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">Sering tergoda checkout promo e-commerce, diskon kilat, dan tren medsos.</p>
+                                        </div>
+                                    </div>
+                                    <div id="comp-pill-2" class="py-1 px-2 rounded-xl text-center text-[10px] font-medium bg-slate-100 text-slate-500">
+                                        Profil Lainnya
+                                    </div>
+                                </div>
+
+                                <!-- Card 3: Sahabat Paylater & Malam -->
+                                <div id="comp-persona-card-3" class="p-3.5 rounded-2xl border transition-all flex flex-col justify-between space-y-2.5 bg-slate-50/60 border-slate-200">
+                                    <div class="space-y-2">
+                                        <div class="w-full h-28 rounded-xl overflow-hidden bg-white/90 border border-slate-100 flex items-center justify-center p-1 shadow-2xs">
+                                            <img src="{{ url_for('static', filename='img/persona_paylater.png') }}" alt="Sahabat Paylater" class="w-full h-full object-cover rounded-lg">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-0.5">
+                                                <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm">Sahabat Paylater</h4>
+                                                <span id="comp-badge-3" class="hidden px-1.5 py-0.5 rounded-md bg-rose-600 text-white text-[9px] font-black tracking-wider uppercase">Kamu!</span>
+                                            </div>
+                                            <p class="text-[10px] text-rose-600 font-bold">Cicilan &amp; Checkout Malam</p>
+                                            <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">Beban cicilan digital aktif dan transaksi impulsif larut malam &gt; 21.00.</p>
+                                        </div>
+                                    </div>
+                                    <div id="comp-pill-3" class="py-1 px-2 rounded-xl text-center text-[10px] font-medium bg-slate-100 text-slate-500">
+                                        Profil Lainnya
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KARTU PENJELASAN RAMAH: BAGAIMANA DOMPETVIBE MENGANALISIS KEUANGANMU -->
+                        <div class="mt-4 p-5 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-4">
+                            <div class="flex items-center justify-between cursor-pointer" onclick="toggleExplanationDetails()">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-sm">💡</span>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-slate-900">Bagaimana DompetVibe Menganalisis Keuanganmu?</h3>
+                                        <p class="text-[11px] text-slate-500">Penjelasan sederhana tentang cara kami membedah mutasi rekeningmu.</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center gap-1 cursor-pointer">
+                                    <span id="toggle-explanation-text">Lihat Rincian</span>
+                                    <i data-lucide="chevron-down" id="toggle-explanation-icon" class="w-4 h-4 transition-transform"></i>
+                                </button>
+                            </div>
+
+                            <div id="explanation-details-content" class="hidden space-y-4 pt-3 border-t border-slate-200/60 text-xs text-slate-600">
+                                <!-- 4 Poin Penjelasan Ramah Pengguna -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                    <div class="p-3.5 rounded-2xl bg-white border border-slate-100 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                                            <span>📊</span>
+                                            <span>1. Keseimbangan Arus Kas (Pemasukan vs Pengeluaran)</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                                            Kami membandingkan pemasukan utama (gaji, transfer masuk) dengan total belanja. Jika uang keluar hampir menyamai uang masuk atau bahkan defisit, status akan dinaikkan ke <strong>Waspada</strong> untuk mengingatkanmu menjaga tabungan darurat.
+                                        </p>
+                                    </div>
+
+                                    <div class="p-3.5 rounded-2xl bg-white border border-slate-100 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                                            <span>🏷️</span>
+                                            <span>2. Pemisahan Kebutuhan Pokok vs Keinginan</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                                            Sistem otomatis memisahkan belanja pokok (sembako, listrik, biaya adm, obat) dari belanja keinginan (warkop, kafe kekinian, delivery makanan, dan marketplace daring) agar kamu tahu persis pos mana yang dominan.
+                                        </p>
+                                    </div>
+
+                                    <div class="p-3.5 rounded-2xl bg-white border border-slate-100 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                                            <span>⏰</span>
+                                            <span>3. Waktu &amp; Kebiasaan Transaksi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                                            Belanja larut malam (pukul 21.00 – 03.00) dan belanja di tanggal kembar kerap dipicu oleh emosi sesaat. Kami memeriksa frekuensi ini untuk membantumu melatih rem belanja.
+                                        </p>
+                                    </div>
+
+                                    <div class="p-3.5 rounded-2xl bg-white border border-slate-100 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                                            <span>💳</span>
+                                            <span>4. Deteksi Cicilan &amp; Pinjaman Digital</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                                            Kami memantau transaksi cicilan berkala (seperti SPayLater, SPinjam, atau tagihan kredit) agar beban utang bulananmu tidak menekan jatah kebutuhan sehari-hari.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Ringkasan Indikator Keuangan Pengguna -->
+                                <div class="p-3 rounded-2xl bg-purple-50/50 border border-purple-100">
+                                    <span class="font-bold text-purple-900 block text-[11px] mb-2">Ringkasan Indikator Keuanganmu dari Mutasi:</span>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 text-center" id="user-features-display">
+                                        <!-- Populated dynamically via JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANGKAH 5: GRAFIK PENGELUARAN PALING BANYAK DIGUNAKAN -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-2xl bg-amber-100 text-amber-700 font-black text-xs flex items-center justify-center">5</span>
+                                <div>
+                                    <h2 class="text-base font-bold text-slate-900">Alokasi Pengeluaran Terbesar</h2>
+                                    <p class="text-xs text-slate-400">Pengeluaranmu lebih banyak digunakan untuk transaksi apa?</p>
+                                </div>
+                            </div>
+                            <span id="top-category-highlight" class="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 w-fit">
+                                Kategori Terbesar: -
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                            <!-- Donut Chart -->
+                            <div class="md:col-span-5 relative h-56 flex items-center justify-center">
+                                <canvas id="categoryDonutChart"></canvas>
+                            </div>
+
+                            <!-- Breakdown List Cards -->
+                            <div class="md:col-span-7 space-y-2.5 text-xs" id="category-breakdown-list">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANGKAH 6: SARAN & TIPS FINANSIAL PERSONAL -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                            <span class="w-8 h-8 rounded-2xl bg-rose-100 text-rose-700 font-black text-xs flex items-center justify-center">6</span>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900">Saran &amp; Tips Praktis untuk Dompetmu</h2>
+                                <p class="text-xs text-slate-400">Langkah nyata yang direkomendasikan berdasarkan hasil analisis mutasimu.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="financial-tips-container">
+                            <!-- Dynamic tip cards populated via JS -->
+                        </div>
+
+                        <!-- SIMULASI CERDAS & RENCANA PENGHEMATAN (WHAT-IF SMART SIMULATOR) -->
+                        <div class="rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-emerald-50/90 via-teal-50/50 to-cyan-50/80 border border-emerald-200/90 mt-6 space-y-6 shadow-xs">
+                            
+                            <!-- Header Simulator -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-200/70 pb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-10 h-10 rounded-2xl bg-white text-emerald-600 text-2xl flex items-center justify-center shadow-xs animate-bounce-soft">💡</span>
+                                    <div>
+                                        <h3 class="font-black text-slate-900 text-base sm:text-lg">Simulasi Cerdas &amp; Rencana Penghematan Nyata</h3>
+                                        <p class="text-xs text-slate-500">Temukan pos pengeluaran terborosmu dan lihat seberapa banyak uang yang bisa kamu selamatkan!</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="whatif-saving-label" class="px-3.5 py-1.5 text-xs font-black rounded-xl bg-white text-emerald-800 shadow-xs border border-emerald-200">
+                                        Hemat 20%
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- 1. KARTU REKOMENDASI AI: POS TERBESAR YANG PERLU DIHEMAT -->
+                            <div id="whatif-ai-recommendation-card" class="p-4 sm:p-5 rounded-2xl bg-white/95 border border-emerald-200 shadow-2xs space-y-2.5">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-black">
+                                        <span class="animate-pulse">🎯</span>
+                                        <span>Prioritas Utama Pemangkasan AI</span>
+                                    </span>
+                                    <span id="whatif-top-cat-stat" class="text-xs font-bold text-slate-500">
+                                        Memuat pos pengeluaran...
+                                    </span>
+                                </div>
+                                <div class="flex items-start gap-3 pt-1">
+                                    <span id="whatif-top-cat-icon" class="text-3xl flex-shrink-0">☕</span>
+                                    <div class="space-y-1">
+                                        <h4 id="whatif-top-cat-title" class="font-black text-slate-900 text-sm">Kuliner &amp; F&amp;B</h4>
+                                        <p id="whatif-top-cat-narrative" class="text-xs text-slate-600 leading-relaxed">
+                                            Pos ini terdeteksi sebagai pengeluaran terbesar yang paling fleksibel untuk dipangkas tanpa mengorbankan kebutuhan pokok sehari-hari.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. PEMILIHAN POS SASARAN PENGHEMATAN (INTERACTIVE CATEGORY CHIPS) -->
+                            <div class="space-y-2.5">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+                                    <label class="font-bold text-slate-800 flex items-center gap-1.5">
+                                        <span>🏷️</span>
+                                        <span>Pilih Pos Pengeluaran yang Ingin Dipangkas:</span>
+                                    </label>
+                                    <span id="whatif-target-pool-text" class="font-bold text-emerald-700 bg-emerald-100/70 px-2.5 py-0.5 rounded-lg text-[11px]">
+                                        Total Dana Sasaran: Rp 0 / bln
+                                    </span>
+                                </div>
+                                <!-- Dynamic Category Chips Container -->
+                                <div id="whatif-category-chips" class="flex flex-wrap gap-2 pt-0.5">
+                                    <!-- Populated dynamically via JS -->
+                                </div>
+                                <p class="text-[11px] text-slate-400 italic">
+                                    *Klik tombol kategori di atas untuk memilih atau membatalkan pos pengeluaran yang ingin kamu sertakan dalam rencana hemat.
+                                </p>
+                            </div>
+
+                            <!-- 3. SLIDER & QUICK PRESET BUTTONS -->
+                            <div class="p-4 rounded-2xl bg-white/90 border border-emerald-100 space-y-3">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-slate-700">Tentukan Target Persentase Pemangkasan:</span>
+                                    <span id="whatif-pct-text" class="font-black text-emerald-700 text-sm">20%</span>
+                                </div>
+                                
+                                <!-- Slider Bar -->
+                                <input type="range" id="slider-whatif" min="5" max="50" step="5" value="20" oninput="updateWhatIfFromSlider()" class="w-full">
+                                
+                                <!-- Quick Preset Buttons -->
+                                <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1">
+                                    <button type="button" onclick="setSavingsPreset(10)" id="btn-preset-10" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-600 border-slate-200 hover:bg-emerald-50 cursor-pointer">
+                                        🌿 Santai (10%)
+                                    </button>
+                                    <button type="button" onclick="setSavingsPreset(20)" id="btn-preset-20" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-emerald-600 text-white border-emerald-600 shadow-2xs cursor-pointer">
+                                        🎯 Rekomendasi (20%)
+                                    </button>
+                                    <button type="button" onclick="setSavingsPreset(35)" id="btn-preset-35" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-600 border-slate-200 hover:bg-emerald-50 cursor-pointer">
+                                        🚀 Agresif (35%)
+                                    </button>
+                                    <button type="button" onclick="setSavingsPreset(50)" id="btn-preset-50" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-600 border-slate-200 hover:bg-emerald-50 cursor-pointer">
+                                        🔥 Maksimal (50%)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 4. HASIL ESTIMASI PENGHEMATAN (DUAL STAT CARDS) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <div class="p-4 rounded-2xl bg-white border border-emerald-200 text-center shadow-2xs hover-lift">
+                                    <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">Bisa Dihemat Per Bulan</span>
+                                    <span id="whatif-month-val" class="text-xl sm:text-2xl font-black text-emerald-900 block mt-1">Rp 0</span>
+                                    <span class="text-[10px] text-slate-400 block mt-0.5">Uang kas terselamatkan setiap bulan</span>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-white border border-emerald-200 text-center shadow-2xs hover-lift">
+                                    <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">Bisa Dihemat Dalam 1 Tahun</span>
+                                    <span id="whatif-year-val" class="text-xl sm:text-2xl font-black text-emerald-900 block mt-1">Rp 0</span>
+                                    <span class="text-[10px] text-slate-400 block mt-0.5">Akumulasi potensi tabungan 12 bulan</span>
+                                </div>
+                            </div>
+
+                            <!-- 5. DAMPAK NYATA KE KESEHATAN ARUS KAS -->
+                            <div id="whatif-cashflow-comparison" class="p-3.5 rounded-2xl bg-emerald-100/60 border border-emerald-200 text-xs font-semibold text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base">📈</span>
+                                    <span id="whatif-comparison-text">Proyeksi Arus Kas Baru: Menghitung...</span>
+                                </div>
+                                <span id="whatif-comparison-badge" class="px-2.5 py-1 rounded-xl bg-white text-emerald-800 text-[10px] font-black shadow-2xs w-fit">
+                                    Tabungan Bertambah
+                                </span>
+                            </div>
+
+                            <!-- 6. UANG HASIL HEMAT INI BISA JADI APA? (REAL-WORLD MILESTONES) -->
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-slate-800 block">✨ Jika Uang Hemat Ini Dikumpulkan, Bisa Jadi Apa?</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                                    <div class="p-3.5 rounded-2xl bg-white/95 border border-emerald-100 space-y-1">
+                                        <span class="text-xl block">🛡️</span>
+                                        <span class="font-bold text-slate-800 block text-[11px]">Dana Darurat</span>
+                                        <p id="whatif-milestone-emergency" class="text-[11px] text-slate-500 leading-relaxed">
+                                            Mengamankan bantalan kas untuk kebutuhan tak terduga.
+                                        </p>
+                                    </div>
+                                    <div class="p-3.5 rounded-2xl bg-white/95 border border-emerald-100 space-y-1">
+                                        <span class="text-xl block">🪙</span>
+                                        <span class="font-bold text-slate-800 block text-[11px]">Tabungan Emas / Modal</span>
+                                        <p id="whatif-milestone-gold" class="text-[11px] text-slate-500 leading-relaxed">
+                                            Setara investasi emas murni antam per tahun.
+                                        </p>
+                                    </div>
+                                    <div class="p-3.5 rounded-2xl bg-white/95 border border-emerald-100 space-y-1">
+                                        <span class="text-xl block">☕</span>
+                                        <span class="font-bold text-slate-800 block text-[11px]">Gaya Hidup Terkendali</span>
+                                        <p id="whatif-milestone-lifestyle" class="text-[11px] text-slate-500 leading-relaxed">
+                                            Setara menghemat beberapa cangkir kopi kekinian per bulan.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7. REKOMENDASI TINDAKAN NYATA (ACTIONABLE TIPS) -->
+                            <div class="p-4 rounded-2xl bg-white/90 border border-emerald-100 space-y-2 text-xs">
+                                <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                                    <span>🚀</span>
+                                    <span>Rekomendasi Langkah Nyata untuk Berhasil:</span>
+                                </span>
+                                <ul id="whatif-action-tips" class="space-y-1.5 text-slate-600 list-none pt-0.5">
+                                    <!-- Dynamic checklist populated via JS -->
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- KARTU AKSI CEPAT UNDUH LAPORAN LENGKAP -->
+                    <div class="p-5 rounded-3xl bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 border border-purple-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm shrink-0">
+                                📊
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Simpan Hasil Analisis Ini untuk Evaluasi Finansialmu</h4>
+                                <p class="text-xs text-slate-500">Unduh dokumen PDF visual 1 halaman lengkap dengan speedometer risiko, alokasi pengeluaran, dan tips hemat.</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadAnalysisPDF()" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap shrink-0">
+                            <i data-lucide="file-down" class="w-4 h-4"></i>
+                            <span>Download Laporan PDF</span>
+                        </button>
+                    </div>
+
+                </section>
+
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- MENU 3: PANDUAN 4 GAYA BELANJA (SPENDING PERSONAS)                   -->
+            <!-- ==================================================================== -->
+            <div id="section-personas-view" class="hidden space-y-8">
+                <!-- Header Persona Guide -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold">
+                        <span>💡</span>
+                        <span>Kenali Karakter Belanjamu</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Panduan 4 Gaya Belanja &amp; Karakter Finansial
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-3xl">
+                        Setiap orang memiliki pola pengeluaran yang berbeda. Cari tahu gaya mana yang paling menggambarkan dirimu dan temukan langkah pencegahan agar dompetmu selalu sehat dan surplus!
+                    </p>
+                </div>
+
+                <!-- 4 In-depth Persona Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- 1. Si Mindful Planner -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100 hover-lift space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3.5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-2xl overflow-hidden border border-emerald-200 shadow-xs shrink-0">
+                                        <img src="{{ url_for('static', filename='img/persona_mindful.png') }}" alt="Si Mindful Planner" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-900">Si Mindful Planner</h3>
+                                        <span class="text-xs font-bold text-emerald-600">Disiplin &amp; Paling Sehat</span>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                    Risiko Rendah (~15%)
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Tipe idaman yang memiliki kontrol diri sangat tinggi. Kebal terhadap godaan diskon kilat atau promo di media sosial. Pengeluaran selalu diprioritaskan untuk kebutuhan pokok dan konsisten menyisihkan tabungan &gt; 30% dari pemasukan.
+                            </p>
+
+                            <div class="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-100 text-xs space-y-1.5">
+                                <span class="font-bold text-emerald-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                                <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                                    <li>Kontrol diri kuat, jarang sekali belanja larut malam.</li>
+                                    <li>Bebas cicilan pinjaman digital konsumtif (Paylater non-aktif).</li>
+                                    <li>Arus kas selalu surplus stabil setiap bulannya.</li>
+                                </ul>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                                <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                                <p>Pertahankan kedisiplinan ini dan mulai alokasikan sebagian surplus kas ke instrumen investasi jangka panjang seperti reksa dana atau emas.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="exploreDemoPersona('mutasi_si_mindful.csv', 'Profil: Si Mindful Planner')" class="w-full py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-emerald-200 cursor-pointer">
+                            <span>🌱 Coba Contoh Mutasi Mindful</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. Anak Kopi & Kafe -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-amber-100 hover-lift space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3.5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-2xl overflow-hidden border border-amber-200 shadow-xs shrink-0">
+                                        <img src="{{ url_for('static', filename='img/persona_kopi.png') }}" alt="Anak Kopi & Kafe" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-900">Anak Kopi &amp; Kafe</h3>
+                                        <span class="text-xs font-bold text-amber-600">Kuliner &amp; Sosialisasi</span>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300">
+                                    Risiko Waspada (~35%)
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Pengeluaran didominasi oleh kuliner, kopi kekinian, nongkrong santai, dan pesan antar makanan daring. Sering menganggap jajan Rp 25.000 - Rp 50.000 kecil, padahal dalam sebulan bisa menelan 20% - 35% uang gajianmu!
+                            </p>
+
+                            <div class="p-3.5 rounded-2xl bg-amber-50/50 border border-amber-100 text-xs space-y-1.5">
+                                <span class="font-bold text-amber-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                                <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                                    <li>Frekuensi transaksi harian sangat padat di merchant F&amp;B / QRIS.</li>
+                                    <li>Pengeluaran jajan sering tidak dicatat karena dianggap receh.</li>
+                                    <li>Sisa tabungan di akhir bulan sering menipis di bawah 15%.</li>
+                                </ul>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                                <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                                <p>Buat "Dompet Khusus Nongkrong" mingguan (misalnya Rp 150.000/minggu) di e-wallet terpisah. Kalau saldo mingguan habis, tahan jajan sampai minggu depan!</p>
+                            </div>
+                        </div>
+
+                        <button onclick="exploreDemoPersona('mutasi_anak_kopi.csv', 'Profil: Anak Kopi & Kafe')" class="w-full py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-amber-200 cursor-pointer">
+                            <span>☕ Coba Contoh Mutasi Anak Kopi</span>
+                        </button>
+                    </div>
+
+                    <!-- 3. Pemburu Promo & FOMO Diskon -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-purple-100 hover-lift space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3.5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-2xl overflow-hidden border border-purple-200 shadow-xs shrink-0">
+                                        <img src="{{ url_for('static', filename='img/persona_promo.png') }}" alt="Pemburu Promo" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-900">Pemburu Promo</h3>
+                                        <span class="text-xs font-bold text-purple-600">Flash Sale &amp; Medsos</span>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-300">
+                                    Risiko Impulsif (~55%)
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Sangat sensitif terhadap kata "Diskon", "Gratis Ongkir", "Cashback", dan event tanggal kembar (10.10, 11.11, payday). Belanja sering dipicu oleh rasa takut ketinggalan tren (FOMO) atau racun rekomendasi di media sosial.
+                            </p>
+
+                            <div class="p-3.5 rounded-2xl bg-purple-50/50 border border-purple-100 text-xs space-y-1.5">
+                                <span class="font-bold text-purple-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                                <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                                    <li>Banyak transaksi non-pokok terjadi di platform marketplace daring.</li>
+                                    <li>Membeli barang karena tergoda potongan harga, bukan karena butuh.</li>
+                                    <li>Barang yang dibeli sering menumpuk dan jarang dipakai.</li>
+                                </ul>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                                <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                                <p>Terapkan <strong>"Aturan Tunggu 48 Jam"</strong> sebelum checkout belanjaan di keranjang online. Matikan notifikasi aplikasi marketplace di ponselmu.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="exploreDemoPersona('mutasi_pejuang_1212.csv', 'Profil: Pemburu Promo')" class="w-full py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-purple-200 cursor-pointer">
+                            <span>⚡ Coba Contoh Pemburu Promo</span>
+                        </button>
+                    </div>
+
+                    <!-- 4. Sahabat Paylater & Belanja Malam -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100 hover-lift space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3.5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-2xl overflow-hidden border border-rose-200 shadow-xs shrink-0">
+                                        <img src="{{ url_for('static', filename='img/persona_paylater.png') }}" alt="Sahabat Paylater" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-900">Sahabat Paylater</h3>
+                                        <span class="text-xs font-bold text-rose-600">Cicilan &amp; Belanja Malam</span>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300">
+                                    Risiko Kritis (~75% - 90%)
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Kerap mengandalkan fasilitas cicilan pinjaman digital (SPayLater, pinjaman online) untuk berbelanja kebutuhan konsumtif. Sering bertransaksi di atas jam 21.00 malam saat kontrol diri melemah sehingga pengeluaran melebihi uang masuk (defisit).
+                            </p>
+
+                            <div class="p-3.5 rounded-2xl bg-rose-50/50 border border-rose-100 text-xs space-y-1.5">
+                                <span class="font-bold text-rose-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                                <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                                    <li>Ada beban cicilan pinjaman digital yang harus dibayar setiap bulan.</li>
+                                    <li>Banyak transaksi terjadi larut malam (midnight shopping).</li>
+                                    <li>Arus kas bulanan sering negatif atau tabungan tersisa &lt; 5%.</li>
+                                </ul>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                                <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                                <p>Hapus metode pembayaran paylater dari aplikasi belanja, prioritaskan pelunasan utang cicilan yang ada, dan gunakan kartu debit langsung.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="exploreDemoPersona('mutasi_raja_paylater.csv', 'Profil: Sahabat Paylater')" class="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-rose-200 cursor-pointer">
+                            <span>💳 Coba Contoh Sahabat Paylater</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Bottom CTA Banner in Persona Guide -->
+                <div class="rounded-3xl bg-gradient-to-r from-purple-500 via-pink-400 to-rose-400 p-7 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
+                    <div class="space-y-1 text-center sm:text-left">
+                        <h3 class="text-lg sm:text-xl font-bold">Penasaran dengan Karakter Finansialmu Sendiri?</h3>
+                        <p class="text-xs text-purple-100">Unggah mutasi rekeningmu sekarang dan temukan kebiasaan belanjamu dalam beberapa detik.</p>
+                    </div>
+                    <button onclick="startMutationFlow()" class="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-purple-700 font-black text-xs shadow-sm transition-all hover:scale-105 whitespace-nowrap cursor-pointer">
+                        🚀 Mulai Analisis Mutasi
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- MENU 4: TENTANG KAMI (ABOUT US) & JAMINAN PRIVASI                    -->
+            <!-- ==================================================================== -->
+            <div id="section-about-view" class="hidden space-y-8">
+                <!-- Header Tentang Kami -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
+                    <!-- Sisi Kiri: Tulisan Tentang DompetVibe -->
+                    <div class="space-y-3 flex-1 max-w-2xl">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pastel-lavender text-purple-700 border border-purple-200 text-xs font-bold">
+                            <span>📖</span>
+                            <span>Mengenal Lebih Dekat</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                            Tentang DompetVibe
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                            DompetVibe lahir dari masalah nyata sehari-hari: mutasi rekening bank penuh dengan kode transaksi yang membingungkan, sulit dibaca, dan membuat banyak orang tidak tahu ke mana uang gajian mereka habis. Kami ingin membuat evaluasi keuangan semudah mengunggah berkas mutasi, dengan bahasa yang santai dan solutif.
+                        </p>
+                    </div>
+
+                    <!-- Sisi Kanan: Logo DompetVibe setinggi card -->
+                    <div class="shrink-0 flex items-center justify-center md:self-stretch">
+                        <img src="{{ url_for('static', filename='img/logo_dompetvibe.png') }}" alt="Logo DompetVibe" class="h-36 sm:h-44 md:h-48 w-auto object-contain animate-float drop-shadow-md select-none pointer-events-none">
+                    </div>
+                </div>
+
+                <!-- 3 Nilai Utama DompetVibe -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="p-6 rounded-3xl bg-pastel-mint border border-pastel-mintBorder space-y-3 hover-lift">
+                        <div class="w-12 h-12 rounded-2xl bg-white text-emerald-600 flex items-center justify-center text-2xl shadow-2xs">
+                            🔒
+                        </div>
+                        <h3 class="font-black text-slate-900 text-base">100% Menjaga Privasi</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Kami tidak pernah meminta password, nomor kartu ATM, CVV, atau PIN perbankanmu. Berkas e-Statement mutasi dianalisis secara privat langsung dan tidak disebarluaskan ke pihak mana pun.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-3xl bg-pastel-lavender border border-pastel-lavenderBorder space-y-3 hover-lift">
+                        <div class="w-12 h-12 rounded-2xl bg-white text-purple-600 flex items-center justify-center text-2xl shadow-2xs">
+                            🗣️
+                        </div>
+                        <h3 class="font-black text-slate-900 text-base">Bahasa Manusia, Bukan Robot</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Tidak ada istilah finansial berbelit-belit atau rumus matematis yang bikin pusing. Semua hasil disajikan dengan bahasa Indonesia yang ramah, santai, dan gampang dimengerti oleh siapa saja.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-3xl bg-pastel-amber border border-pastel-amberBorder space-y-3 hover-lift">
+                        <div class="w-12 h-12 rounded-2xl bg-white text-amber-600 flex items-center justify-center text-2xl shadow-2xs">
+                            🎁
+                        </div>
+                        <h3 class="font-black text-slate-900 text-base">Gratis &amp; Bebas Iklan</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            DompetVibe dapat digunakan secara cuma-cuma oleh siapa saja — mulai dari mahasiswa, pekerja kantoran, hingga keluarga muda yang ingin mewujudkan kesehatan finansial yang lebih baik.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Bank & E-Wallet yang Didukung -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="font-black text-slate-900 text-base flex items-center gap-2">
+                        <span>🏦</span>
+                        <span>Bank &amp; Dompet Digital yang Didukung</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                        Kamu dapat mengunggah mutasi digital dalam format <strong>PDF Asli</strong>, <strong>Excel (.xlsx)</strong>, maupun <strong>CSV</strong> dari berbagai institusi berikut:
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-bold text-slate-700">
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🔵</span>
+                            <span>BCA &amp; m-BCA</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🟡</span>
+                            <span>Bank Mandiri</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🔵</span>
+                            <span>Bank BRI</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🟠</span>
+                            <span>Bank BNI</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🟣</span>
+                            <span>Bank Permata (ME)</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🟢</span>
+                            <span>GoPay</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🟠</span>
+                            <span>ShopeePay</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                            <span>🟣</span>
+                            <span>OVO &amp; DANA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Siap Mencoba? -->
+                <div class="rounded-3xl bg-gradient-to-r from-purple-500 via-pink-400 to-rose-400 p-7 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
+                    <div class="space-y-1 text-center sm:text-left">
+                        <h3 class="text-lg sm:text-xl font-bold">Yuk, Cek Kesehatan Dompetmu Sekarang!</h3>
+                        <p class="text-xs text-purple-100">Hanya butuh beberapa detik untuk mengetahui ke mana larinya uang gajianmu.</p>
+                    </div>
+                    <button onclick="startMutationFlow()" class="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-purple-700 font-black text-xs shadow-sm transition-all hover:scale-105 whitespace-nowrap cursor-pointer">
+                        🚀 Buka Analisis Mutasi
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- MENU 5: TANYA JAWAB (FAQ) & KONTAK KAMI                              -->
+            <!-- ==================================================================== -->
+            <div id="section-contact-view" class="hidden space-y-8">
+                <!-- Header FAQ & Kontak -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pastel-lavender text-purple-700 border border-purple-200 text-xs font-bold">
+                        <span>💬</span>
+                        <span>Pusat Bantuan &amp; Pertanyaan</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Tanya Jawab &amp; Kontak Kami
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-3xl">
+                        Punya pertanyaan seputar cara mengunduh mutasi rekening atau ingin memberikan masukan untuk pengembangan DompetVibe? Kami siap membantu!
+                    </p>
+                </div>
+
+                <!-- ACCORDION FAQ -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-3">
+                    <h3 class="font-black text-slate-900 text-base mb-2 flex items-center gap-2">
+                        <span>❓</span>
+                        <span>Pertanyaan yang Sering Ditanyakan (FAQ)</span>
+                    </h3>
+
+                    <!-- FAQ 0 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(0)" class="w-full text-left p-4 bg-slate-50/50 hover:bg-purple-50/40 flex items-center justify-between font-bold text-xs sm:text-sm text-slate-800 transition-colors cursor-pointer">
+                            <span>1. Bagaimana cara mengunduh berkas e-Statement mutasi dari m-BCA atau bank lain?</span>
+                            <i data-lucide="chevron-down" id="faq-chevron-0" class="w-4 h-4 text-purple-600 transition-transform"></i>
+                        </button>
+                        <div id="faq-content-0" class="hidden p-4 text-xs text-slate-600 border-t border-slate-100 space-y-2 bg-white">
+                            <p>Caranya sangat mudah:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li><strong>m-BCA / BCA Mobile:</strong> Buka aplikasi &gt; pilih menu <strong>m-Info</strong> &gt; pilih <strong>Mutasi Rekening</strong> &gt; pilih rentang tanggal atau e-Statement bulanan &gt; kirim ke email atau unduh sebagai PDF.</li>
+                                <li><strong>Livin' by Mandiri:</strong> Buka rekening tabungan &gt; pilih menu <strong>e-Statement</strong> &gt; pilih bulan yang ingin diunduh &gt; simpan PDF.</li>
+                                <li><strong>BRImo / BNI Mobile:</strong> Masuk ke mutasi rekening &gt; pilih filter bulan &gt; unduh laporan mutasi dalam format PDF atau CSV.</li>
+                            </ol>
+                            <p class="text-purple-700 font-semibold mt-1">Setelah file tersimpan di HP atau laptop, kamu cukup seret file tersebut ke halaman Analisis Mutasi DompetVibe!</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 1 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(1)" class="w-full text-left p-4 bg-slate-50/50 hover:bg-purple-50/40 flex items-center justify-between font-bold text-xs sm:text-sm text-slate-800 transition-colors cursor-pointer">
+                            <span>2. Apakah data transaksi dan rekening saya aman?</span>
+                            <i data-lucide="chevron-down" id="faq-chevron-1" class="w-4 h-4 text-purple-600 transition-transform"></i>
+                        </button>
+                        <div id="faq-content-1" class="hidden p-4 text-xs text-slate-600 border-t border-slate-100 space-y-2 bg-white">
+                            <p><strong>Sangat aman!</strong> DompetVibe sama sekali tidak meminta informasi rahasia seperti nomor kartu debit/kredit, PIN, sandi m-Banking, atau CVV.</p>
+                            <p>Berkas mutasi yang kamu unggah hanya dibaca untuk mengelompokkan pos belanja dan arus kas. Kami tidak menjual atau membagikan data transaksimu kepada pihak ketiga mana pun.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(2)" class="w-full text-left p-4 bg-slate-50/50 hover:bg-purple-50/40 flex items-center justify-between font-bold text-xs sm:text-sm text-slate-800 transition-colors cursor-pointer">
+                            <span>3. Bisakah saya mengunggah mutasi lebih dari satu bulan sekaligus?</span>
+                            <i data-lucide="chevron-down" id="faq-chevron-2" class="w-4 h-4 text-purple-600 transition-transform"></i>
+                        </button>
+                        <div id="faq-content-2" class="hidden p-4 text-xs text-slate-600 border-t border-slate-100 space-y-2 bg-white">
+                            <p><strong>Bisa banget!</strong> Di kotak unggah, kamu bisa memilih beberapa berkas sekaligus (misalnya mutasi bulan Juli, Agustus, dan September).</p>
+                            <p>DompetVibe akan otomatis mengenali bulan masing-masing transaksi, mengelompokkannya ke tab per bulan, serta memberikan rangkuman tren rata-rata pengeluaran bulananmu.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(3)" class="w-full text-left p-4 bg-slate-50/50 hover:bg-purple-50/40 flex items-center justify-between font-bold text-xs sm:text-sm text-slate-800 transition-colors cursor-pointer">
+                            <span>4. Mengapa ada pengeluaran yang masuk kategori 'Lain-lain'?</span>
+                            <i data-lucide="chevron-down" id="faq-chevron-3" class="w-4 h-4 text-purple-600 transition-transform"></i>
+                        </button>
+                        <div id="faq-content-3" class="hidden p-4 text-xs text-slate-600 border-t border-slate-100 space-y-2 bg-white">
+                            <p>Beberapa transaksi transfer perorangan antarbank atau pembayaran QRIS di toko kecil terkadang menggunakan kode unik atau nama pribadi pemilik rekening yang tidak mencantumkan nama merchant.</p>
+                            <p>Sistem kami secara cerdas mengidentifikasi kata kunci belanja, kuliner, cicilan pinjaman, dan biaya administrasi. Transaksi yang belum terklasifikasi secara spesifik akan ditampung di kategori 'Lain-lain' agar perhitungan total saldo tetap akurat 100%.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORMULIR HUBUNGI KAMI -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
+                    <div>
+                        <h3 class="font-black text-slate-900 text-base flex items-center gap-2">
+                            <span>📬</span>
+                            <span>Kirim Masukan atau Saran</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Kami sangat senang mendengar masukan darimu untuk menyempurnakan DompetVibe.</p>
+                    </div>
+
+                    <form onsubmit="handleContactSubmit(event)" class="space-y-4 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="font-bold text-slate-700 block">Nama Lengkap</label>
+                                <input type="text" id="contact-name" required placeholder="Contoh: Budi Santoso" class="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="font-bold text-slate-700 block">Alamat Email</label>
+                                <input type="email" id="contact-email" required placeholder="nama@email.com" class="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700 block">Pesan atau Masukan Anda</label>
+                            <textarea id="contact-message" rows="4" required placeholder="Tuliskan pengalamanmu menggunakan DompetVibe atau fitur apa yang ingin kamu tambahkan..." class="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-400"></textarea>
+                        </div>
+
+                        <button type="submit" class="px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black transition-all hover:scale-105 shadow-md shadow-purple-200 flex items-center gap-2 cursor-pointer">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Kirim Pesan</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="py-6 border-t border-purple-100 text-center text-xs text-slate-400 bg-white flex flex-col sm:flex-row items-center justify-center gap-2">
+            <img src="{{ url_for('static', filename='img/logo_dompetvibe.png') }}" alt="DompetVibe.ai Logo" class="w-5 h-5 object-contain">
+            <p><strong>DompetVibe.ai</strong> • Sahabat Finansial Pintar &amp; Terpercaya • 2026</p>
+        </footer>
+
+    </div><!-- END MAIN CONTENT WRAPPER AREA -->
+
+    <!-- ==================================================================== -->
+    <!-- POPUP MODAL: KETERANGAN KARAKTER FINANSIAL (DETAIL GAYA BELANJA)     -->
+    <!-- ==================================================================== -->
+    <div id="persona-detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200" onclick="handlePersonaModalBackdrop(event)">
+        <div class="relative w-full max-w-lg bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <!-- Tombol Tutup X -->
+            <button onclick="closePersonaModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer z-20" title="Tutup">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+
+            <!-- 1. Si Mindful Planner -->
+            <div id="modal-card-mindful" class="persona-modal-item hidden space-y-4">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
+                    <span>🌱</span>
+                    <span>Kenali Karakter Belanjamu</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl overflow-hidden border border-emerald-200 shadow-xs shrink-0">
+                            <img src="{{ url_for('static', filename='img/persona_mindful.png') }}" alt="Si Mindful Planner" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-black text-slate-900">Si Mindful Planner</h3>
+                            <span class="text-xs font-bold text-emerald-600">Disiplin &amp; Paling Sehat</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        Risiko Rendah (~15%)
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Tipe idaman yang memiliki kontrol diri sangat tinggi. Kebal terhadap godaan diskon kilat atau promo di media sosial. Pengeluaran selalu diprioritaskan untuk kebutuhan pokok dan konsisten menyisihkan tabungan &gt; 30% dari pemasukan.
+                </p>
+
+                <div class="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-100 text-xs space-y-1.5">
+                    <span class="font-bold text-emerald-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                    <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                        <li>Kontrol diri kuat, jarang sekali belanja larut malam.</li>
+                        <li>Bebas cicilan pinjaman digital konsumtif (Paylater non-aktif).</li>
+                        <li>Arus kas selalu surplus stabil setiap bulannya.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                    <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                    <p>Pertahankan kedisiplinan ini dan mulai alokasikan sebagian surplus kas ke instrumen investasi jangka panjang seperti reksa dana atau emas.</p>
+                </div>
+
+                <button onclick="startPersonaFromModal('mutasi_si_mindful.csv', 'Profil: Si Mindful Planner')" class="w-full py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-emerald-200 cursor-pointer">
+                    <span>🌱 Coba Contoh Mutasi Mindful</span>
+                </button>
+            </div>
+
+            <!-- 2. Anak Kopi & Kafe -->
+            <div id="modal-card-kopi" class="persona-modal-item hidden space-y-4">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold">
+                    <span>☕</span>
+                    <span>Kenali Karakter Belanjamu</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl overflow-hidden border border-amber-200 shadow-xs shrink-0">
+                            <img src="{{ url_for('static', filename='img/persona_kopi.png') }}" alt="Anak Kopi & Kafe" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-black text-slate-900">Anak Kopi &amp; Kafe</h3>
+                            <span class="text-xs font-bold text-amber-600">Kuliner &amp; Sosialisasi</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300">
+                        Risiko Waspada (~35%)
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Pengeluaran didominasi oleh kuliner, kopi kekinian, nongkrong santai, dan pesan antar makanan daring. Sering menganggap jajan Rp 25.000 - Rp 50.000 kecil, padahal dalam sebulan bisa menelan 20% - 35% uang gajianmu!
+                </p>
+
+                <div class="p-3.5 rounded-2xl bg-amber-50/50 border border-amber-100 text-xs space-y-1.5">
+                    <span class="font-bold text-amber-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                    <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                        <li>Frekuensi transaksi harian sangat padat di merchant F&amp;B / QRIS.</li>
+                        <li>Pengeluaran jajan sering tidak dicatat karena dianggap receh.</li>
+                        <li>Sisa tabungan di akhir bulan sering menipis di bawah 15%.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                    <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                    <p>Buat &quot;Dompet Khusus Nongkrong&quot; mingguan (misalnya Rp 150.000/minggu) di e-wallet terpisah. Kalau saldo mingguan habis, tahan jajan sampai minggu depan!</p>
+                </div>
+
+                <button onclick="startPersonaFromModal('mutasi_anak_kopi.csv', 'Profil: Anak Kopi & Kafe')" class="w-full py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-amber-200 cursor-pointer">
+                    <span>☕ Coba Contoh Mutasi Anak Kopi</span>
+                </button>
+            </div>
+
+            <!-- 3. Pemburu Promo -->
+            <div id="modal-card-promo" class="persona-modal-item hidden space-y-4">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-bold">
+                    <span>⚡</span>
+                    <span>Kenali Karakter Belanjamu</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl overflow-hidden border border-purple-200 shadow-xs shrink-0">
+                            <img src="{{ url_for('static', filename='img/persona_promo.png') }}" alt="Pemburu Promo" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-black text-slate-900">Pemburu Promo</h3>
+                            <span class="text-xs font-bold text-purple-600">Flash Sale &amp; Medsos</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-300">
+                        Risiko Impulsif (~55%)
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Sangat sensitif terhadap kata &quot;Diskon&quot;, &quot;Gratis Ongkir&quot;, &quot;Cashback&quot;, dan event tanggal kembar (10.10, 11.11, payday). Belanja sering dipicu oleh rasa takut ketinggalan tren (FOMO) atau racun rekomendasi di media sosial.
+                </p>
+
+                <div class="p-3.5 rounded-2xl bg-purple-50/50 border border-purple-100 text-xs space-y-1.5">
+                    <span class="font-bold text-purple-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                    <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                        <li>Banyak transaksi non-pokok terjadi di platform marketplace daring.</li>
+                        <li>Membeli barang karena tergoda potongan harga, bukan karena butuh.</li>
+                        <li>Barang yang dibeli sering menumpuk dan jarang dipakai.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                    <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                    <p>Terapkan <strong>&quot;Aturan Tunggu 48 Jam&quot;</strong> sebelum checkout belanjaan di keranjang online. Matikan notifikasi aplikasi marketplace di ponselmu.</p>
+                </div>
+
+                <button onclick="startPersonaFromModal('mutasi_pejuang_1212.csv', 'Profil: Pemburu Promo')" class="w-full py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-purple-200 cursor-pointer">
+                    <span>⚡ Coba Contoh Pemburu Promo</span>
+                </button>
+            </div>
+
+            <!-- 4. Sahabat Paylater -->
+            <div id="modal-card-paylater" class="persona-modal-item hidden space-y-4">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">
+                    <span>💳</span>
+                    <span>Kenali Karakter Belanjamu</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl overflow-hidden border border-rose-200 shadow-xs shrink-0">
+                            <img src="{{ url_for('static', filename='img/persona_paylater.png') }}" alt="Sahabat Paylater" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-black text-slate-900">Sahabat Paylater</h3>
+                            <span class="text-xs font-bold text-rose-600">Cicilan &amp; Belanja Malam</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300">
+                        Risiko Kritis (~75% - 90%)
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Kerap mengandalkan fasilitas cicilan pinjaman digital (SPayLater, pinjaman online) untuk berbelanja kebutuhan konsumtif. Sering bertransaksi di atas jam 21.00 malam saat kontrol diri melemah sehingga pengeluaran melebihi uang masuk (defisit).
+                </p>
+
+                <div class="p-3.5 rounded-2xl bg-rose-50/50 border border-rose-100 text-xs space-y-1.5">
+                    <span class="font-bold text-rose-900 block text-[11px] uppercase tracking-wider">Ciri-Ciri Khas:</span>
+                    <ul class="space-y-1 text-slate-600 list-disc list-inside">
+                        <li>Ada beban cicilan pinjaman digital yang harus dibayar setiap bulan.</li>
+                        <li>Banyak transaksi terjadi larut malam (midnight shopping).</li>
+                        <li>Arus kas bulanan sering negatif atau tabungan tersisa &lt; 5%.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                    <span class="font-bold text-slate-800 block text-[11px]">Saran Finansial:</span>
+                    <p>Hapus metode pembayaran paylater dari aplikasi belanja, prioritaskan pelunasan utang cicilan yang ada, dan gunakan kartu debit langsung.</p>
+                </div>
+
+                <button onclick="startPersonaFromModal('mutasi_raja_paylater.csv', 'Profil: Sahabat Paylater')" class="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-rose-200 cursor-pointer">
+                    <span>💳 Coba Contoh Sahabat Paylater</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
